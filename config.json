@@ -1,3 +1,6 @@
 {
+    "app_name": "Gulp for UI5",
+    "app_theme": "sap_belize",
+    "app_resource": "https://openui5.hana.ondemand.com/resources/sap-ui-core.js",
     "namespace": "sap.ui.demo"
 }

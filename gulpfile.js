@@ -1,32 +1,31 @@
-//Gulp
+//General
 var gulp = require('gulp');
 var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 var gutil = require('gulp-util');
-var concat = require('gulp-concat');
 var es = require('event-stream');
-//var del = require('del');
-var plumber = require('gulp-plumber');
-var uglify = require('gulp-uglify');
 var prettydata = require('gulp-pretty-data');
 var gulpif = require('gulp-if');
 var lazypipe = require('lazypipe');
 var ui5preload = require('gulp-ui5-preload');
 
-//HTML
+
+//Scripts and tests
 var htmlhint = require('gulp-htmlhint');
-//SASS
+var jshint = require('gulp-jshint');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+
+//Styles
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
-//JS
-var jshint = require('gulp-jshint');
-//XML
-var xmlvalidator = require('gulp-xml-validator');
+
 //Tools
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 var inquirer = require('inquirer');
+
 //Runtime variables
 var CONFIG = require('./config.json');
 var TYPES = [
@@ -115,6 +114,9 @@ gulp.task('add', function () {
 
 gulp.task('html', function () {
     return gulp.src('app/*.html')
+        .pipe(replace("{{app_name}}", CONFIG.app_name))
+        .pipe(replace("{{app_theme}}", CONFIG.app_theme))
+        .pipe(replace("{{app_resource}}", CONFIG.app_resource))
         .pipe(replace("{{namespace}}", CONFIG.namespace))
         .pipe(htmlhint())
         .pipe(htmlhint.reporter("htmlhint-stylish"))
@@ -140,41 +142,27 @@ gulp.task('i18n', function () {
 })
 
 gulp.task('preload', function () {
+    var jshintChannel = lazypipe()
+        .pipe(jshint)
+        .pipe(jshint.reporter, 'jshint-stylish')
+        .pipe(uglify);
+    var xmlChannel = lazypipe()
+        .pipe(prettydata, {
+            type: 'minify'
+        });
+
     return gulp.src([
             'app/**/**.+(js|xml)'
         ])
         .pipe(replace("{{namespace}}", CONFIG.namespace))
-        .pipe(gulpif('**/*.js', jshintChannel())) //only pass .js files to uglify
-        .pipe(gulpif('**/*.xml', xmlChannel())) // only pass .xml to prettydata  
+        .pipe(gulpif('**/*.js', jshintChannel())) //only pass .js files
+        .pipe(gulpif('**/*.xml', xmlChannel())) // only pass .xml files
         .pipe(ui5preload({
             base: 'app/',
             namespace: CONFIG.namespace
         }))
         .pipe(gulp.dest('dist'));
 })
-var jshintChannel = lazypipe()
-    .pipe(jshint)
-    .pipe(jshint.reporter, 'jshint-stylish')
-    .pipe(uglify);
-var xmlChannel = lazypipe()
-    .pipe(prettydata,{
-        type: 'minify'
-    });
-// gulp.task('js', function(cb) {
-//     return gulp.src('app/**/**.js', {base: './app/'})
-//         .pipe(replace("{{namespace}}", CONFIG.namespace))
-//         .pipe(jshint().on('error', error))
-//         .pipe(jshint.reporter("jshint-stylish"))
-//         .pipe(gulp.dest('dist'))
-// })
-// gulp.task('xml', function () {
-//     return gulp.src('app/**/**.xml', {
-//             base: './app/'
-//         })
-//         .pipe(replace("{{namespace}}", CONFIG.namespace))
-//         .pipe(xmlvalidator().on('error', error))
-//         .pipe(gulp.dest('dist'))
-// })
 
 
 gulp.task('browserSync', function () {
@@ -188,8 +176,8 @@ gulp.task('browserSync', function () {
 gulp.task('watch', function () {
     gulp.watch('app/scss/*.scss', ['sass']);
     gulp.watch('app/*.html', ['html']).on('change', reload);
-    gulp.watch('app/**/**.+(js|xml)', ['preload']).on('change', reload);
     gulp.watch('app/**/**.properties', ['i18n']).on('change', reload);
+    gulp.watch('app/**/**.+(js|xml)', ['preload']).on('change', reload);
 })
 
 gulp.task('default', ['html', 'sass', 'i18n', 'preload', 'browserSync', 'watch'])
