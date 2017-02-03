@@ -97,6 +97,7 @@ gulp-for-ui5
 |__.travis.yml
 |__config.json
 |__gulpfile.js
+|__jsdoc.json
 |__package.json
 |__README.md
 ```
