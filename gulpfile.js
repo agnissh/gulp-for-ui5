@@ -8,7 +8,7 @@ var prettydata = require('gulp-pretty-data');
 var gulpif = require('gulp-if');
 var lazypipe = require('lazypipe');
 var ui5preload = require('gulp-ui5-preload');
-
+var jsdoc = require('gulp-jsdoc3');
 
 //Scripts and tests
 var htmlhint = require('gulp-htmlhint');
@@ -36,9 +36,10 @@ var TYPES = [
 ];
 
 var add = {
-    formatter: function (name) {
+    formatter: function (name, f) {
         return gulp.src('templates/formatter.js')
-            .pipe(rename(name))
+            .pipe(rename(f))
+            .pipe(replace("{{formatter_name}}", name))
             .pipe(gulp.dest('app/model')).on('end', function () {
                 return gutil.log("File " + name + " added to app/model");
             })
@@ -94,7 +95,7 @@ gulp.task('add', function () {
         if (answer.name) {
             switch (answer.type) {
                 case TYPES[0]:
-                    add.formatter(answer.name + ".js");
+                    add.formatter(answer.name, answer.name + ".js");
                     break;
                 case TYPES[1]:
                     add.fragment(answer.name + ".xml");
@@ -172,8 +173,16 @@ gulp.task('watch', function () {
     gulp.watch('app/**/**.+(js|xml|properties)', ['preload']).on('change', reload);
 })
 
+gulp.task('docs', function(cb){
+    var config = require('./jsdoc.json');
+    gulp.src(['app/README.md', './app/**/*.js'], {
+        read: false
+    })
+    .pipe(jsdoc(config, cb));
+})
+
 gulp.task('test', function(cb){
     return cb;
 })
 
-gulp.task('default', ['html', 'sass', 'preload', 'browserSync', 'watch'])
+gulp.task('default', ['html', 'sass', 'preload', 'docs', 'browserSync', 'watch'])

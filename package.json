@@ -16,6 +16,7 @@
     "gulp-concat": "^2.6.1",
     "gulp-htmlhint": "^0.3.1",
     "gulp-if": "^2.0.2",
+    "gulp-jsdoc3": "^1.0.1",
     "gulp-jshint": "^2.0.4",
     "gulp-pretty-data": "^0.1.1",
     "gulp-rename": "^1.2.2",

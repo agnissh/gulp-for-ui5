@@ -11,6 +11,7 @@ Boilerplate for [UI5](https://openui5.hana.ondemand.com/) development backed by 
 * Sass compilation, autoprefixing and concatenation
 * Livereload server with BrowserSync
 * Module generator for UI5. Currently supports View & Controller, Fragment and Formatter
+* JsDoc documentation generation. 
 
 [Download](https://github.com/neel2292/gulp-for-ui5/archive/master.zip)
 
@@ -81,11 +82,17 @@ gulp-for-ui5
 |__dist
 
     |__css/
-        style.css
+        |__style.css
+
+    |__docs/
+        |__*
 
     |__Component-preload.js
     |__index.html
-    
+
+|__node_modules/
+    |__*
+
 |__.gitignore
 |__.travis.yml
 |__config.json
@@ -108,13 +115,16 @@ Configuration is stored in `config.json` file and contains the following:
 ### Module generator
 
 There are several modules which can be generated using `gulp add`
-* Formatter `model/*.js`
-* Fragment `view/*.xml`
-* I18n `i18n/i18n-*.properties`
-* View & Controller `view/*.view.xml`, `controller/*.controller.js`
+* `model/*.js`: Formatter
+* `view/*.xml`: Fragment
+* `i18n/i18n-*.properties`: I18n
+* `view/*.view.xml`, `controller/*.controller.js`: View & Controller
+
+### Documentation generator
+
+Documentation can be generated using `gulp docs`
 
 ## Todo
 
-* Documentation generator
 * Image and SVG handling
 * Jasmine unit test and report generation
