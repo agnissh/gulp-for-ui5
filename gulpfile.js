@@ -172,7 +172,7 @@ gulp.task('watch', function () {
     gulp.watch('app/**/**.+(js|xml|properties)', ['preload']).on('change', reload);
 })
 
-gulp.task(test, function(cb){
+gulp.task('test', function(cb){
     return cb;
 })
 
