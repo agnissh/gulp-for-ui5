@@ -172,4 +172,8 @@ gulp.task('watch', function () {
     gulp.watch('app/**/**.+(js|xml|properties)', ['preload']).on('change', reload);
 })
 
+gulp.task(test, function(cb){
+    return cb;
+})
+
 gulp.task('default', ['html', 'sass', 'preload', 'browserSync', 'watch'])
