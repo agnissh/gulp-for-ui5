@@ -87,6 +87,7 @@ gulp-for-ui5
     |__index.html
     
 |__.gitignore
+|__.travis.yml
 |__config.json
 |__gulpfile.js
 |__package.json
