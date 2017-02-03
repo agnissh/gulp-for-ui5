@@ -71,6 +71,3 @@ Thumbs.db
 
 # build
 dist/
-
-# configuration
-config.json
