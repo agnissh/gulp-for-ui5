@@ -1,4 +1,4 @@
-# Gulp for UI5  
+# Gulp for UI5  [![Build Status](https://travis-ci.org/neel2292/gulp-for-ui5.svg?branch=master)](https://travis-ci.org/neel2292/gulp-for-ui5)
 
 <img src="https://s3.amazonaws.com/media-p.slid.es/uploads/78377/images/1337731/gulp.png" height="100" />
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Plus_font_awesome.svg/2000px-Plus_font_awesome.svg.png" height="100" />
