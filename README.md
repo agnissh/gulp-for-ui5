@@ -7,7 +7,7 @@
 Boilerplate for [UI5](https://openui5.hana.ondemand.com/) development backed by [Gulp.js](http://gulpjs.com/). Inspired from [cferdinandi's gulp-boilerplate](https://github.com/cferdinandi/gulp-boilerplate)
 
 * HTMLhint and JShint provided during build time
-* Component-preload.js builder for UI5. Currently supports JS and XML views
+* Component-preload.js builder for UI5. Currently supports `.js` and `.xml` views as well as `.properties` files
 * Sass compilation, autoprefixing and concatenation
 * Livereload server with BrowserSync
 * Module generator for UI5. Currently supports View & Controller, Fragment and Formatter
@@ -77,6 +77,13 @@ gulp-for-ui5
     |__formatter.js
     |__fragment.xml
     |__view.xml
+|__dist
+
+    |__css/
+        style.css
+
+    |__Component-preload.js
+    |__index.html
     
 |__.gitignore
 |__config.json
