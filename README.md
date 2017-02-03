@@ -77,6 +77,7 @@ gulp-for-ui5
     |__formatter.js
     |__fragment.xml
     |__view.xml
+    
 |__dist
 
     |__css/
