@@ -134,13 +134,6 @@ gulp.task('sass', function () {
         .pipe(browserSync.stream())
 })
 
-gulp.task('i18n', function () {
-    return gulp.src('app/**/**.properties', {
-            base: './app/'
-        })
-        .pipe(gulp.dest('dist'))
-})
-
 gulp.task('preload', function () {
     var jshintChannel = lazypipe()
         .pipe(jshint)
@@ -152,7 +145,7 @@ gulp.task('preload', function () {
         });
 
     return gulp.src([
-            'app/**/**.+(js|xml)'
+            'app/**/**.+(js|xml|properties)'
         ])
         .pipe(replace("{{namespace}}", CONFIG.namespace))
         .pipe(gulpif('**/*.js', jshintChannel())) //only pass .js files
@@ -176,8 +169,7 @@ gulp.task('browserSync', function () {
 gulp.task('watch', function () {
     gulp.watch('app/scss/*.scss', ['sass']);
     gulp.watch('app/*.html', ['html']).on('change', reload);
-    gulp.watch('app/**/**.properties', ['i18n']).on('change', reload);
-    gulp.watch('app/**/**.+(js|xml)', ['preload']).on('change', reload);
+    gulp.watch('app/**/**.+(js|xml|properties)', ['preload']).on('change', reload);
 })
 
-gulp.task('default', ['html', 'sass', 'i18n', 'preload', 'browserSync', 'watch'])
+gulp.task('default', ['html', 'sass', 'preload', 'browserSync', 'watch'])
