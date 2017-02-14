@@ -9,10 +9,12 @@ var gulpif = require('gulp-if');
 var lazypipe = require('lazypipe');
 var ui5preload = require('gulp-ui5-preload');
 var jsdoc = require('gulp-jsdoc3');
+var plumber = require('gulp-plumber');
 
 //Scripts and tests
 var htmlhint = require('gulp-htmlhint');
 var jshint = require('gulp-jshint');
+var jsonlint = require("gulp-jsonlint");
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 
@@ -38,6 +40,7 @@ var TYPES = [
 var add = {
     formatter: function (name, f) {
         return gulp.src('templates/formatter.js')
+            .pipe(plumber())
             .pipe(rename(f))
             .pipe(replace("{{formatter_name}}", name))
             .pipe(gulp.dest('app/model')).on('end', function () {
@@ -46,6 +49,7 @@ var add = {
     },
     fragment: function (name) {
         return gulp.src('templates/fragment.xml')
+            .pipe(plumber())
             .pipe(rename(name))
             .pipe(gulp.dest('app/view')).on('end', function () {
                 return gutil.log("File " + name + " added to app/view");
@@ -53,6 +57,7 @@ var add = {
     },
     i18n: function (name) {
         return gulp.src('app/i18n/i18n.properties')
+            .pipe(plumber())
             .pipe(rename(name))
             .pipe(gulp.dest('app/i18n')).on('end', function () {
                 return gutil.log("File " + name + " added to app/i18n");
@@ -61,12 +66,14 @@ var add = {
     view_controller: function (name, v, c) {
         return es.concat(
             gulp.src('templates/controller.js')
+            .pipe(plumber())
             .pipe(replace("{{controller_name}}", name))
             .pipe(rename(c))
             .pipe(gulp.dest('app/controller')).on('end', function () {
                 return gutil.log("File " + c + " added to app/controller");
             }),
             gulp.src('templates/view.xml')
+            .pipe(plumber())
             .pipe(replace("{{view_name}}", name))
             .pipe(rename(v))
             .pipe(gulp.dest('app/view')).on('end', function () {
@@ -74,11 +81,6 @@ var add = {
             })
         );
     }
-}
-
-function error(l) {
-    gutil.log(l);
-    this.emit('end');
 }
 
 gulp.task('add', function () {
@@ -115,6 +117,7 @@ gulp.task('add', function () {
 
 gulp.task('html', function () {
     return gulp.src('app/*.html')
+        .pipe(plumber())
         .pipe(replace("{{app_name}}", CONFIG.app_name))
         .pipe(replace("{{app_theme}}", CONFIG.app_theme))
         .pipe(replace("{{app_resource}}", CONFIG.app_resource))
@@ -124,10 +127,21 @@ gulp.task('html', function () {
         .pipe(gulp.dest('dist'))
 })
 
+gulp.task('json', function () {
+    return gulp.src('app/**/**.json')
+        .pipe(plumber())
+        .pipe(jsonlint())
+        .pipe(jsonlint.reporter(function(file){
+            gutil.log('File ' + file.path + ' is not a valid JSON file.');
+        }))
+        .pipe(gulp.dest('dist'))
+})
+
 gulp.task('sass', function () {
     return gulp.src('app/scss/*.scss')
+        .pipe(plumber())
         .pipe(sourcemaps.init())
-        .pipe(sass().on('error', error))
+        .pipe(sass())
         .pipe(autoprefixer())
         .pipe(sourcemaps.write())
         .pipe(concat('style.css'))
@@ -148,6 +162,7 @@ gulp.task('preload', function () {
     return gulp.src([
             'app/**/**.+(js|xml|properties)'
         ])
+        .pipe(plumber())
         .pipe(replace("{{namespace}}", CONFIG.namespace))
         .pipe(gulpif('**/*.js', jshintChannel())) //only pass .js files
         .pipe(gulpif('**/*.xml', xmlChannel())) // only pass .xml files
@@ -170,6 +185,7 @@ gulp.task('browserSync', function () {
 gulp.task('watch', function () {
     gulp.watch('app/scss/*.scss', ['sass']);
     gulp.watch('app/*.html', ['html']).on('change', reload);
+    gulp.watch('app/**/**.json', ['json']).on('change', reload);
     gulp.watch('app/**/**.+(js|xml|properties)', ['preload']).on('change', reload);
 })
 
@@ -178,6 +194,7 @@ gulp.task('docs', function(cb){
     gulp.src(['app/README.md', './app/**/*.js'], {
         read: false
     })
+    .pipe(plumber())
     .pipe(jsdoc(config, cb));
 })
 
