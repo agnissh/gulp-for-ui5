@@ -202,4 +202,4 @@ gulp.task('test', function(cb){
     return cb;
 })
 
-gulp.task('default', ['html', 'sass', 'preload', 'docs', 'browserSync', 'watch'])
+gulp.task('default', ['html', 'json', 'sass', 'preload', 'docs', 'browserSync', 'watch'])
