@@ -30,6 +30,11 @@ var inquirer = require('inquirer');
 
 //Runtime variables
 var CONFIG = require('./config.json');
+var onError = function (err) {  
+  gutil.log(err.toString());
+  this.emit('end');
+};
+
 var TYPES = [
     "Formatter",
     "Fragment",
@@ -40,7 +45,9 @@ var TYPES = [
 var add = {
     formatter: function (name, f) {
         return gulp.src('templates/formatter.js')
-            .pipe(plumber())
+            .pipe(plumber({
+                errorHandler: onError
+            }))
             .pipe(rename(f))
             .pipe(replace("{{formatter_name}}", name))
             .pipe(gulp.dest('app/model')).on('end', function () {
@@ -49,7 +56,9 @@ var add = {
     },
     fragment: function (name) {
         return gulp.src('templates/fragment.xml')
-            .pipe(plumber())
+            .pipe(plumber({
+                errorHandler: onError
+            }))
             .pipe(rename(name))
             .pipe(gulp.dest('app/view')).on('end', function () {
                 return gutil.log("File " + name + " added to app/view");
@@ -57,7 +66,9 @@ var add = {
     },
     i18n: function (name) {
         return gulp.src('app/i18n/i18n.properties')
-            .pipe(plumber())
+            .pipe(plumber({
+                errorHandler: onError
+            }))
             .pipe(rename(name))
             .pipe(gulp.dest('app/i18n')).on('end', function () {
                 return gutil.log("File " + name + " added to app/i18n");
@@ -66,14 +77,18 @@ var add = {
     view_controller: function (name, v, c) {
         return es.concat(
             gulp.src('templates/controller.js')
-            .pipe(plumber())
+            .pipe(plumber({
+                errorHandler: onError
+            }))
             .pipe(replace("{{controller_name}}", name))
             .pipe(rename(c))
             .pipe(gulp.dest('app/controller')).on('end', function () {
                 return gutil.log("File " + c + " added to app/controller");
             }),
             gulp.src('templates/view.xml')
-            .pipe(plumber())
+            .pipe(plumber({
+                errorHandler: onError
+            }))
             .pipe(replace("{{view_name}}", name))
             .pipe(rename(v))
             .pipe(gulp.dest('app/view')).on('end', function () {
@@ -117,7 +132,9 @@ gulp.task('add', function () {
 
 gulp.task('html', function () {
     return gulp.src('app/*.html')
-        .pipe(plumber())
+        .pipe(plumber({
+            errorHandler: onError
+        }))
         .pipe(replace("{{app_name}}", CONFIG.app_name))
         .pipe(replace("{{app_theme}}", CONFIG.app_theme))
         .pipe(replace("{{app_resource}}", CONFIG.app_resource))
@@ -129,7 +146,9 @@ gulp.task('html', function () {
 
 gulp.task('json', function () {
     return gulp.src('app/**/**.json')
-        .pipe(plumber())
+        .pipe(plumber({
+            errorHandler: onError
+        }))
         .pipe(jsonlint())
         .pipe(jsonlint.reporter(function(file){
             gutil.log('File ' + file.path + ' is not a valid JSON file.');
@@ -139,7 +158,9 @@ gulp.task('json', function () {
 
 gulp.task('sass', function () {
     return gulp.src('app/scss/*.scss')
-        .pipe(plumber())
+        .pipe(plumber({
+            errorHandler: onError
+        }))
         .pipe(sourcemaps.init())
         .pipe(sass())
         .pipe(autoprefixer())
@@ -162,7 +183,9 @@ gulp.task('preload', function () {
     return gulp.src([
             'app/**/**.+(js|xml|properties)'
         ])
-        .pipe(plumber())
+        .pipe(plumber({
+            errorHandler: onError
+        }))
         .pipe(replace("{{namespace}}", CONFIG.namespace))
         .pipe(gulpif('**/*.js', jshintChannel())) //only pass .js files
         .pipe(gulpif('**/*.xml', xmlChannel())) // only pass .xml files
@@ -194,7 +217,9 @@ gulp.task('docs', function(cb){
     gulp.src(['app/README.md', './app/**/*.js'], {
         read: false
     })
-    .pipe(plumber())
+    .pipe(plumber({
+        errorHandler: onError
+    }))
     .pipe(jsdoc(config, cb));
 })
 
