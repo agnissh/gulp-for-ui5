@@ -89,7 +89,7 @@ var add = {
             .pipe(plumber({
                 errorHandler: onError
             }))
-            .pipe(replace("{{view_name}}", name))
+            .pipe(replace("{{controller_name}}", name))
             .pipe(rename(v))
             .pipe(gulp.dest('app/view')).on('end', function () {
                 return gutil.log("File " + v + " added to app/view");
@@ -149,6 +149,7 @@ gulp.task('json', function () {
         .pipe(plumber({
             errorHandler: onError
         }))
+        .pipe(replace("{{namespace}}", CONFIG.namespace))
         .pipe(jsonlint())
         .pipe(jsonlint.reporter(function(file){
             gutil.log('File ' + file.path + ' is not a valid JSON file.');
